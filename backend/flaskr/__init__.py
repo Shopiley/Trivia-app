@@ -6,7 +6,6 @@ from flask_cors import CORS, cross_origin
 from flask_migrate import Migrate
 import random
 
-# from models import setup_db, Question, Category
 from models import *
 
 QUESTIONS_PER_PAGE = 10
@@ -29,7 +28,7 @@ def create_app(test_config=None):
     CORS(app)
 
     """
-    @TODO:  Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
     # CORS(app, resources={r'*/questions/*' : {'origins': '*'}})
 
@@ -49,7 +48,6 @@ def create_app(test_config=None):
         return response
 
     """
-    @TODO:
     Create an endpoint to handle GET requests
     for all available categories.
     """
@@ -69,7 +67,6 @@ def create_app(test_config=None):
 
 
     """
-    @TODO:
     Create an endpoint to handle GET requests for questions,
     including pagination (every 10 questions).
     This endpoint should return a list of questions,
@@ -88,10 +85,10 @@ def create_app(test_config=None):
         categories = Category.query.all()
         formatted_categories = {category.id:category.type for category in categories}
         
-
         if len(paginated_questions) == 0 | (len(categories) == 0):
             abort(404)
 
+        #to access the category of the first question returned
         current_category = paginated_questions[0]['category']
 
         return jsonify({
@@ -103,7 +100,6 @@ def create_app(test_config=None):
         })
   
     """
-    @TODO:
     Create an endpoint to DELETE question using a question ID.
 
     TEST: When you click the trash icon next to a question, the question will be removed.
@@ -130,7 +126,7 @@ def create_app(test_config=None):
                             'questions': paginated_questions
                         }
                     )
-                
+                #additional: to get a question by id
                 else: 
                     return jsonify({
                         'success': True,
@@ -141,7 +137,6 @@ def create_app(test_config=None):
             abort(422)
 
     """
-    @TODO:
     Create an endpoint to POST a new question,
     which will require the question and answer text,
     category, and difficulty score.
@@ -152,7 +147,6 @@ def create_app(test_config=None):
     """
 
     """
-    @TODO:
     Create a POST endpoint to get questions based on a search term.
     It should return any questions for whom the search term
     is a substring of the question.
@@ -161,6 +155,7 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
+    #executed both create and search in the one endpoint since they had the same method
     @app.route('/questions', methods=['POST'])
     def create_question():
         body = request.get_json()
@@ -171,7 +166,6 @@ def create_app(test_config=None):
         category = body.get("category", 1)
         search_term = body.get("searchTerm", None)
   
-        # try:
         if search_term:
 
             search_result = Question.query.order_by(Question.id).filter(Question.question.ilike("%{}%".format(search_term))).all()
@@ -203,12 +197,8 @@ def create_app(test_config=None):
                 'success': True
             })
           
-        # except:
-        #     abort(422)
-        # return redirect(url_for('index'))
 
     """
-    @TODO:
     Create a GET endpoint to get questions based on category.
 
     TEST: In the "List" tab / main screen, clicking on one of the
@@ -233,7 +223,6 @@ def create_app(test_config=None):
 
 
     """
-    @TODO:
     Create a POST endpoint to get questions to play the quiz.
     This endpoint should take category and previous question parameters
     and return a random questions within the given category,
@@ -252,14 +241,15 @@ def create_app(test_config=None):
         
         category_id = quiz_category['id']
 
+        # if 'ALL' is selected on the frontend
         if category_id == 0:
             questions_in_category = Question.query.all()
 
+        # if a specific category is selected on the frontend
         else:
             questions_in_category = Question.query.filter(Question.category == category_id).all()
             
         selected_ids = [question.id for question in questions_in_category]
-        print(selected_ids)
         random_id = random.choice([r_id for r_id in selected_ids if r_id not in previous_questions])
         random_question = Question.query.get(random_id)       
 
@@ -267,11 +257,9 @@ def create_app(test_config=None):
             'question': random_question.format()
         })
 
-        
-        
+         
 
     """
-    @TODO:
     Create error handlers for all expected errors
     including 404 and 422.
     """
