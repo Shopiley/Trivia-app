@@ -138,7 +138,8 @@ def create_app(test_config=None):
                         'question': question.format()
                     })
 
-        except Exception:
+        except Exception as e:
+            print(e)
             db.session.rollback()
             abort(422)
 
@@ -164,7 +165,6 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
-    # executed both create and search in the one endpoint
     @app.route('/questions', methods=['POST'])
     def create_question():
         body = request.get_json()
