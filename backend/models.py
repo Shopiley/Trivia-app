@@ -2,9 +2,11 @@ import os
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
-from settings import *  
+from settings import *
 
-database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER, DB_PASSWORD, 'localhost:5432', DB_NAME)
+database_path = 'postgresql://{}:{}@{}/{}'.format(
+    DB_USER, DB_PASSWORD, 'localhost:5432', DB_NAME
+    )
 
 db = SQLAlchemy()
 
@@ -12,6 +14,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 """
+
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -19,10 +23,13 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
 
+
 """
 Question
 
 """
+
+
 class Question(db.Model):
     __tablename__ = 'questions'
 
@@ -30,7 +37,9 @@ class Question(db.Model):
     question = Column(String)
     answer = Column(String)
     # category = Column(String)
-    category = Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+    category = Column(db.Integer,
+                      db.ForeignKey('categories.id'),
+                      nullable=False)
     difficulty = Column(Integer)
 
     def __init__(self, question, answer, category, difficulty):
@@ -59,16 +68,19 @@ class Question(db.Model):
             'difficulty': self.difficulty
             }
 
+
 """
 Category
 
 """
+
+
 class Category(db.Model):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
     type = Column(String)
-    questions = db.relationship('Question', backref='categorys')     #removed lazy=true
+    questions = db.relationship('Question', backref='categorys')
 
     def __init__(self, type):
         self.type = type
@@ -78,6 +90,4 @@ class Category(db.Model):
             'id': self.id,
             'type': self.type
             }
-        # return{
-        #     self.id: self.type
-        # }
+
